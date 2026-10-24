@@ -54,7 +54,7 @@ button,select,input,textarea{font:inherit;color:inherit}
 .hint{margin:0 0 14px;color:var(--muted);font-size:13.5px}
 .dl-row{display:grid;grid-template-columns:1fr;gap:12px}
 label.f,div.f{display:flex;flex-direction:column;gap:4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
-select,input[type=text],input[type=number],textarea{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:14.5px;text-transform:none;letter-spacing:0;font-weight:400;width:100%;color:var(--ink)}
+select,input[type=text],input[type=email],input[type=number],textarea{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:14.5px;text-transform:none;letter-spacing:0;font-weight:400;width:100%;color:var(--ink)}
 textarea{min-height:72px;resize:vertical}
 .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500;font-size:14px}
@@ -64,6 +64,11 @@ textarea{min-height:72px;resize:vertical}
 .btn.danger{color:var(--danger)}
 .btn[disabled]{opacity:.5;cursor:default}
 .status{font-size:13px;color:var(--muted);margin-top:10px;min-height:1.2em}
+.req{display:grid;gap:12px;margin-top:12px}
+.req[hidden]{display:none}
+.req textarea{min-height:56px}
+.approve{margin-top:12px;padding:12px;border:1px solid var(--navy);border-radius:6px;font-size:13.5px}
+.approve p{margin:4px 0 0}
 
 .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .stat{background:var(--surface);padding:12px 12px 10px;min-width:0}
@@ -243,7 +248,7 @@ footer.site button{background:none;border:0;color:var(--muted);text-decoration:u
   <section class="desk">
     <div class="panel">
       <h2>Download biodata</h2>
-      <p class="hint">Choose a version and a file type. Every file is built from the records on this page, so it carries your latest updates.</p>
+      <p class="hint" id="dlHint">Choose the version you need and send a request. Once it is approved, you receive a download link by email.</p>
       <div class="dl-row">
         <label class="f" for="docKind">Document
           <select id="docKind">
@@ -257,11 +262,19 @@ footer.site button{background:none;border:0;color:var(--muted);text-decoration:u
           <select id="docFmt"></select>
         </label>
       </div>
+      <div class="req" id="reqBox" hidden>
+        <label class="f" for="rqName">Your name<input type="text" id="rqName" autocomplete="name"></label>
+        <label class="f" for="rqEmail">Your email<input type="email" id="rqEmail" autocomplete="email"></label>
+        <label class="f" for="rqNote">Purpose (optional)<textarea id="rqNote" maxlength="300"></textarea></label>
+        <input type="text" id="rqHoney" tabindex="-1" autocomplete="off" aria-hidden="true" hidden>
+      </div>
       <div class="btns">
-        <button class="btn primary" id="dlBtn" type="button">Download</button>
-        <button class="btn" id="pvBtn" type="button">Show preview</button>
+        <button class="btn primary" id="dlBtn" type="button" hidden>Download</button>
+        <button class="btn primary" id="rqBtn" type="button">Request download</button>
+        <button class="btn" id="pvBtn" type="button" hidden>Show preview</button>
       </div>
       <div class="status" id="dlStatus" role="status"></div>
+      <div id="approveBox"></div>
     </div>
     <div>
       <div class="stats" id="stats"></div>
@@ -334,7 +347,7 @@ const SECTIONS=[
 ];
 const SEC=Object.fromEntries(SECTIONS.map(s=>[s.key,s]));
 const PROFILE_FIELDS=[T("photo","Photo",{type:"photo"}),T("name","Name"),T("shortTitle","Short title (infographic)"),T("designation","Designation line"),T("department","Department"),T("institution","Institution"),T("ribbon","Highlight ribbon (infographic)"),
- T("email","Email(s), comma separated"),T("phone","Phone"),T("website","Website"),
+ T("email","Email(s), comma separated"),T("requestEmail","Email for download requests (blank: first email above)"),T("phone","Phone"),T("website","Website"),
  T("ieee","IEEE membership no."),T("orcid","ORCID"),T("scopus","Scopus author ID"),T("scholar","Google Scholar ID"),T("wos","Web of Science ID"),T("vidwan","Vidwan ID"),
  T("careerStart","Teaching career start year",{type:"number"}),T("citations","Citations (manual, used only when no automatic figure)"),T("hindex","h-index (manual fallback)"),T("metricsNote","Source of the manual figures"),
  T("summary","Profile summary",{type:"area"}),T("interests","Research interests",{type:"area"}),
@@ -786,10 +799,11 @@ function saveBlob(blob,filename){const u=URL.createObjectURL(blob);const a=docum
 let downloads=STATIC?{save:async({filename,data})=>{saveBlob(data instanceof Blob?data:new Blob([data]),filename);return{status:"saved"}}}:null;
 function fileName(kind,fmt){const n=((state.profile||{}).name||"Biodata").replace(/^Dr\.?\s*/i,"").replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"");
   return `${n}_${{infographic:"Infographic",summary:"One_Page_Summary",resume:"Resume",full:"Full_Biodata"}[kind]}.${fmt}`}
-$("#docKind").addEventListener("change",()=>{syncFormats();if(!$("#preview").hidden)showPreview()});
+$("#docKind").addEventListener("change",()=>{syncFormats();renderAccess();if(!canDownload($("#docKind").value))$("#preview").hidden=true;else if(!$("#preview").hidden)showPreview()});
 $("#dlBtn").addEventListener("click",async()=>{
   const st=$("#dlStatus");const kind=$("#docKind").value,fmt=$("#docFmt").value;
   if(!state.loaded){st.textContent="Records are still loading. Try again in a moment.";return}
+  if(!canDownload(kind)){renderAccess();return}
   if(!downloads){st.textContent="Downloads are not available in this view.";return}
   if(fmt==="pdf"&&!window.jspdf){st.textContent="The PDF library did not load. Reload the page and try again.";return}
   if(fmt==="docx"&&!window.JSZip){st.textContent="The Word library did not load. Reload the page and try again.";return}
@@ -811,7 +825,7 @@ function showPreview(){const kind=$("#docKind").value;const host=$("#paperHost")
   host.innerHTML=kind==="infographic"?`<div class="ig-fit">${infographic()}</div>`:`<div class="paper">${toHTML(buildDoc(kind))}</div>`;
   $("#pvTitle").textContent="Preview: "+KIND_LABEL[kind];$("#preview").hidden=false;fitInfographic()}
 window.addEventListener("resize",fitInfographic);
-$("#pvBtn").addEventListener("click",()=>{if(!state.loaded)return;showPreview();$("#preview").scrollIntoView({behavior:"smooth",block:"start"})});
+$("#pvBtn").addEventListener("click",()=>{if(!state.loaded||!canDownload($("#docKind").value))return;showPreview();$("#preview").scrollIntoView({behavior:"smooth",block:"start"})});
 $("#pvClose").addEventListener("click",()=>$("#preview").hidden=true);
 
 /* ---------- page render ---------- */
@@ -842,7 +856,12 @@ function renderNav(){
       <label class="f" for="ghRepo">Repository (owner/name)<input type="text" id="ghRepo" value="${esc(gh.repo||"")}" placeholder="username/repository"></label>
       <div class="row"><label class="f" for="ghBranch">Branch<input type="text" id="ghBranch" value="${esc(gh.branch||"main")}"></label><label class="f" for="ghPath">File<input type="text" id="ghPath" value="${esc(gh.path||"data.js")}"></label></div>
       <label class="f" for="ghToken">Access token<input type="text" id="ghToken" value="${esc(gh.token||"")}" placeholder="github_pat_…" autocomplete="off" spellcheck="false"></label>
-      <button class="btn small" type="button" id="ghSave">Save settings on this device</button></div></details>`
+      <button class="btn small" type="button" id="ghSave">Save settings on this device</button></div></details>
+    <details${isOwner()?"":" open"}><summary style="cursor:pointer">Download access</summary><div class="pub">
+      <span>${isOwner()?"This device is set up as yours. You can download every document without a request and approve requests from visitors."
+        :publicKey()?"Downloads are set up on another device. Import your key file to use this device, or create a new key (links you approved earlier stop working)."
+        :"Set up this device so that only you can download without a request. Then publish."}</span>
+      <div class="btns" style="margin-top:0">${isOwner()?"":`<button class="btn small primary" type="button" id="akSetup">${publicKey()?"Create a new key":"Set up this device"}</button>`}${ownerKey()?`<button class="btn small" type="button" id="akExport">Save key file</button>`:""}<label class="btn small">Import key file<input type="file" id="akImport" accept=".json,application/json" hidden></label></div></div></details>`
     :`<span>Changes save straight away and every visitor sees them.</span>`}</div>`;
   const tg=$("#editToggle");if(tg)tg.addEventListener("change",()=>{state.editing=tg.checked;state.openForm=null;state.confirmDel=null;render()});
   const on=(id,fn)=>{const el=$("#"+id);if(el)el.addEventListener("click",fn)};
@@ -850,6 +869,9 @@ function renderNav(){
   on("discard",()=>{ls.del(DRAFT_KEY);loadStatic(true);toast("Changes discarded")});
   on("ghSave",()=>{ls.set(GH_KEY,JSON.stringify(readGh()));toast("Settings saved on this device")});
   on("ghPublish",publishGitHub);
+  on("akSetup",setupOwnerKey);
+  on("akExport",()=>{saveBlob(new Blob([ls.get(OWNER_KEY)],{type:"application/json"}),"biodata-owner-key.json");toast("Saved the key file. Keep it private.")});
+  const ki=$("#akImport");if(ki)ki.addEventListener("change",()=>{if(ki.files&&ki.files[0])importOwnerKey(ki.files[0])});
 }
 function fieldInput(f,val,idp){const id=idp+f.k;
   if(f.type==="photo")return`<div class="f">${esc(f.label)}<div class="photo-row">${val?`<img src="${esc(val)}" alt="">`:""}<input type="file" accept="image/*" data-photo-for="${id}" aria-label="Choose a photo">${val?`<button class="btn small" type="button" data-photo-clear="${id}">Remove photo</button>`:""}<input type="hidden" id="${id}" data-k="${f.k}" value="${esc(val||"")}"></div></div>`;
@@ -902,7 +924,7 @@ function renderMain(){
   const f=main.querySelector("form.form");if(f){const first=f.querySelector("textarea,input[type=text]");first&&first.focus({preventScroll:true})}
 }
 function renderFoot(){$("#foot").textContent=`© ${new Date().getFullYear()} ${(state.profile||{}).name||""}`+(state.updatedAt?` · Records updated ${state.updatedAt}`:"")}
-function render(){renderMast();renderStats();renderCharts();renderMetrics();renderNav();renderMain();renderFoot();if(state.profile&&state.profile.name)document.title=state.profile.name}
+function render(){renderMast();renderStats();renderCharts();renderMetrics();renderNav();renderMain();renderFoot();renderAccess();if(state.profile&&state.profile.name)document.title=state.profile.name}
 
 /* ---------- photo input ---------- */
 function shrinkPhoto(file){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=()=>rej(new Error("read"));r.onload=()=>{const im=new Image();im.onerror=()=>rej(new Error("decode"));im.onload=()=>{
@@ -969,6 +991,101 @@ $("#main").addEventListener("submit",async ev=>{
   state.openForm=null;if(!(await saveSection(sk,list)))state.openForm=of;
 });
 
+/* ---------- download access ----------
+   The owner's browser holds a private signing key; its public half is published in data.js (profile.downloadKey).
+   Visitors send a request (emailed through formsubmit.co) carrying an #approve= link. The owner opens it, approves,
+   and the page signs a #grant= link for that one document, valid for GRANT_DAYS. A static site cannot truly hide
+   the records (they are on the page), so this controls the download box, not the data itself. */
+const OWNER_KEY="gk-owner-key",GRANTS_KEY="gk-download-grants",GRANT_DAYS=30;
+const ECDSA={name:"ECDSA",namedCurve:"P-256"},SIG={name:"ECDSA",hash:"SHA-256"},subtle=window.crypto&&crypto.subtle;
+const access={grants:{},approve:null};
+const b64u={enc:b=>{let s="";new Uint8Array(b).forEach(c=>s+=String.fromCharCode(c));return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")},
+  dec:s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0))};
+const packJSON=o=>b64u.enc(new TextEncoder().encode(JSON.stringify(o))),unpackJSON=s=>JSON.parse(new TextDecoder().decode(b64u.dec(s)));
+function ownerKey(){try{const k=JSON.parse(ls.get(OWNER_KEY)||"null");return k&&k.priv&&k.pub?k:null}catch(e){return null}}
+function publicKey(){const k=(state.profile||{}).downloadKey;return k&&k.x&&k.y?k:null}
+function isOwner(){if(!STATIC)return true;const k=ownerKey(),p=publicKey();return !!(k&&p&&k.pub.x===p.x&&k.pub.y===p.y)}
+function canDownload(kind){return isOwner()||!!access.grants[kind]}
+function requestEmail(){const p=state.profile||{};return(p.requestEmail||String(p.email||"").split(/\s*,\s*/)[0]||"").trim()}
+const siteURL=()=>location.origin+location.pathname;
+
+async function setupOwnerKey(){
+  if(!subtle){toast("This browser cannot create the key here. Open the live site (https) and try again.");return}
+  const kp=await subtle.generateKey(ECDSA,true,["sign","verify"]);
+  const priv=await subtle.exportKey("jwk",kp.privateKey),pub=await subtle.exportKey("jwk",kp.publicKey);
+  if(!ls.set(OWNER_KEY,JSON.stringify({priv,pub:{x:pub.x,y:pub.y}}))){toast("This browser would not store the key. Try another browser.");return}
+  if(await saveProfile(Object.assign({},state.profile||{},{downloadKey:{x:pub.x,y:pub.y}})))toast("This device is set up. Publish to GitHub to finish, then save the key file as a backup.")
+}
+function importOwnerKey(file){const r=new FileReader();r.onload=()=>{
+  try{const k=JSON.parse(r.result);if(!k.priv||!k.pub||!k.pub.x)throw 0;ls.set(OWNER_KEY,JSON.stringify(k));render();
+    toast(isOwner()?"Key imported. This device can now download and approve.":"Key imported, but it does not match the published key.")}
+  catch(e){toast("That file is not a biodata key file.")}};r.readAsText(file)}
+async function signGrant(req){
+  const priv=await subtle.importKey("jwk",ownerKey().priv,ECDSA,false,["sign"]);
+  const body=packJSON({k:req.k,n:req.n,e:req.e,x:Date.now()+GRANT_DAYS*864e5});
+  return body+"."+b64u.enc(await subtle.sign(SIG,priv,new TextEncoder().encode(body)))}
+async function checkGrant(tok){
+  try{const p=publicKey();if(!p||!subtle)return null;const [body,sig]=String(tok).split(".");
+    const key=await subtle.importKey("jwk",{kty:"EC",crv:"P-256",x:p.x,y:p.y,ext:true},ECDSA,false,["verify"]);
+    if(!(await subtle.verify(SIG,key,b64u.dec(sig),new TextEncoder().encode(body))))return null;
+    const g=unpackJSON(body);return g.x>Date.now()&&KIND_LABEL[g.k]?g:null}catch(e){return null}}
+
+/* Reads saved grants plus any #grant= / #approve= link in the address, then redraws the download box. */
+async function loadAccess(){
+  const h=location.hash,gm=h.match(/^#grant=([\w-]+\.[\w-]+)$/),am=h.match(/^#approve=([\w-]+)$/);
+  if(gm||am)history.replaceState(null,"",location.pathname+location.search);
+  if(am){try{access.approve=unpackJSON(am[1])}catch(e){access.approve=null}}
+  let toks=[];try{toks=JSON.parse(ls.get(GRANTS_KEY)||"[]")}catch(e){}
+  if(gm)toks.push(gm[1]);
+  const keep=[],grants={};let linked=null;
+  for(const t of [...new Set(toks)]){const g=await checkGrant(t);if(g){keep.push(t);grants[g.k]=g;if(gm&&t===gm[1])linked=g}}
+  ls.set(GRANTS_KEY,JSON.stringify(keep));access.grants=grants;
+  if(linked){$("#docKind").value=linked.k;syncFormats()}
+  renderAccess();
+  if(gm)$("#dlStatus").textContent=linked?`Approved. You can now download the ${KIND_LABEL[linked.k].toLowerCase()} until ${fmtDate(new Date(linked.x).toISOString().slice(0,10))}.`:"This download link is not valid or has expired. Please send a new request.";
+}
+function renderAccess(){
+  const kind=$("#docKind").value,owner=isOwner(),ok=canDownload(kind),box=$("#reqBox");
+  $("#dlBtn").hidden=!ok;$("#pvBtn").hidden=!ok;$("#rqBtn").hidden=ok;if(ok)box.hidden=true;
+  $("#rqBtn").textContent=box.hidden?"Request download":"Send request";
+  $("#dlHint").textContent=owner?"Choose a version and a file type. Every file is built from the records on this page, so it carries your latest updates."
+    :ok?"Your request for this version was approved. Choose a file type and download.":"Choose the version you need and send a request. Once it is approved, you receive a download link by email.";
+  const r=access.approve,ab=$("#approveBox");
+  if(!r){ab.innerHTML="";return}
+  ab.innerHTML=owner?`<div class="approve"><b>Download request</b><p>${esc(r.n)} (${esc(r.e)}) asked for the ${esc(KIND_LABEL[r.k]||r.k).toLowerCase()}.${r.p?` Purpose: “${esc(r.p)}”`:""}</p>
+      <div class="btns" style="margin-top:10px"><button class="btn small primary" type="button" id="apOk">Approve and email the link</button><button class="btn small" type="button" id="apCopy">Approve and copy the link</button><button class="btn small" type="button" id="apNo">Dismiss</button></div></div>`
+    :`<div class="approve"><b>Approval link</b><p>Open this link on the device where you set up downloads (Update records, then Download access).</p><div class="btns" style="margin-top:10px"><button class="btn small" type="button" id="apNo">Dismiss</button></div></div>`;
+  const done=()=>{access.approve=null;renderAccess()};
+  $("#apNo").addEventListener("click",done);
+  const approve=async mail=>{
+    if(!KIND_LABEL[r.k]){toast("This request is not readable.");return}
+    try{const link=siteURL()+"#grant="+(await signGrant(r));
+      if(mail)location.href="mailto:"+encodeURIComponent(r.e)+"?subject="+encodeURIComponent("Your biodata download: "+KIND_LABEL[r.k])+"&body="+encodeURIComponent(`Dear ${r.n},\n\nYour request is approved. Open this link to download the ${KIND_LABEL[r.k].toLowerCase()} (valid for ${GRANT_DAYS} days):\n\n${link}\n\nRegards,\n${(state.profile||{}).name||""}`);
+      else{await navigator.clipboard.writeText(link);toast("Approved. The download link is copied; paste it into your reply.")}
+      done();$("#dlStatus").textContent=`Approved ${r.n}'s request.`}
+    catch(e){toast("Could not create the link: "+(e&&e.message||"unknown error")+".")}};
+  if(owner){$("#apOk").addEventListener("click",()=>approve(true));$("#apCopy").addEventListener("click",()=>approve(false))}
+}
+$("#rqBtn").addEventListener("click",async()=>{
+  const box=$("#reqBox"),st=$("#dlStatus"),btn=$("#rqBtn");
+  if(box.hidden){box.hidden=false;renderAccess();$("#rqName").focus();return}
+  if($("#rqHoney").value)return;
+  const n=$("#rqName").value.trim(),e=$("#rqEmail").value.trim(),p=$("#rqNote").value.trim().slice(0,300),k=$("#docKind").value,to=requestEmail();
+  if(!n||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){st.textContent="Enter your name and a valid email address.";return}
+  if(!to){st.textContent="Requests are not set up yet.";return}
+  const link=siteURL()+"#approve="+packJSON({n,e,k,p});
+  btn.disabled=true;st.textContent="Sending your request…";
+  try{
+    const res=await fetch("https://formsubmit.co/ajax/"+encodeURIComponent(to),{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({_subject:"Biodata download request: "+KIND_LABEL[k],_template:"table",_replyto:e,_captcha:"false",Name:n,Email:e,Document:KIND_LABEL[k],Purpose:p||"-","To approve, open this link":link})});
+    const j=await res.json().catch(()=>({}));
+    if(!res.ok||String(j.success)==="false")throw new Error(j.message||"status "+res.status);
+    box.hidden=true;["rqName","rqEmail","rqNote"].forEach(id=>$("#"+id).value="");renderAccess();
+    st.textContent="Request sent. You will receive an email with a download link once it is approved.";
+  }catch(err){st.textContent=`The request could not be sent. Please email ${to} instead.`}
+  finally{btn.disabled=false}
+});
+
 /* ---------- boot ---------- */
 function loadStatic(ignoreDraft){
   const base=window.CV_DATA||{};let src=base;state.dirty=false;
@@ -982,7 +1099,7 @@ syncFormats();
 $("#editLink").addEventListener("click",()=>{state.canEdit=true;state.editing=true;render();$("#editSlot").scrollIntoView({behavior:"smooth",block:"start"})});
 if(STATIC){
   if(location.hash==="#edit"){state.canEdit=true;state.editing=true}
-  loadStatic(false);
+  loadStatic(false);loadAccess();
 }else{
   $("#editLink").hidden=true;render();
   (async()=>{

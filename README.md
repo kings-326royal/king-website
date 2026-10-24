@@ -15,7 +15,7 @@ A single-page academic profile with downloadable biodata. It runs on GitHub Page
 
 - See the headline statistics and three charts: publications by type, journal papers by indexing, and publications per year.
 - Read every section (experience, publications, patents, grants, service, awards, training).
-- Pick a **Document** and a **File type**, then press **Download**:
+- Pick a **Document** and a **File type**. Only you (and visitors you approve) can download; see *Download requests* below.
 
 | Document | File types |
 | --- | --- |
@@ -24,7 +24,7 @@ A single-page academic profile with downloadable biodata. It runs on GitHub Page
 | Standard resume (2–3 pages) | PDF, Word |
 | Full biodata (every record, nothing omitted) | PDF, Word |
 
-- Press **Show preview** to see the document before downloading.
+- Press **Show preview** to see the document before downloading (also only for you and approved visitors).
 
 The files are built in the browser from `data.js`, so they always match the website.
 
@@ -36,6 +36,24 @@ The files are built in the browser from `data.js`, so they always match the webs
 4. After about a minute the site is live at `https://<your-username>.github.io/gnanaking-profile/`.
 
 If you name the repository `<your-username>.github.io`, the site lives at `https://<your-username>.github.io/`.
+
+## Download requests
+
+Visitors see the document list but get **Request download** instead of **Download**. They enter their name, email and an optional purpose, and the request is emailed to you through [FormSubmit](https://formsubmit.co) (free, no account). It goes to **Email for download requests** in **Edit profile details**, or to your first email if that is blank.
+
+**One-time setup**
+
+1. On your own computer, open the live site, click **Update records**, open **Download access** and click **Set up this device**. Then click **Publish to GitHub**. From now on this browser downloads everything without a request.
+2. Click **Save key file** and keep the file somewhere private. To use another computer or phone, open **Download access** there and choose **Import key file**.
+3. Send yourself a test request from a private window. The first time, FormSubmit emails you an **Activate** link; click it, or no requests will reach you.
+
+**Approving a request**
+
+Open the link in the request email on your set-up device. The download box shows who asked and for what. Click **Approve and email the link**: your email app opens a reply containing a download link for that document, valid for 30 days. **Approve and copy the link** copies it instead. To decline, simply do not approve.
+
+If you click **Create a new key**, links approved earlier stop working.
+
+This is a static site, so the records themselves are visible on the page to everyone. The request step controls the ready-made downloads, not the data, and a technically skilled person could get around it.
 
 ## Update your records later
 
