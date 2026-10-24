@@ -1054,7 +1054,9 @@ function renderAccess(){
   if(!r){ab.innerHTML="";return}
   ab.innerHTML=owner?`<div class="approve"><b>Download request</b><p>${esc(r.n)} (${esc(r.e)}) asked for the ${esc(KIND_LABEL[r.k]||r.k).toLowerCase()}.${r.p?` Purpose: “${esc(r.p)}”`:""}</p>
       <div class="btns" style="margin-top:10px"><button class="btn small primary" type="button" id="apOk">Approve and email the link</button><button class="btn small" type="button" id="apCopy">Approve and copy the link</button><button class="btn small" type="button" id="apNo">Dismiss</button></div></div>`
-    :`<div class="approve"><b>Approval link</b><p>Open this link on the device where you set up downloads (Update records, then Download access).</p><div class="btns" style="margin-top:10px"><button class="btn small" type="button" id="apNo">Dismiss</button></div></div>`;
+    :`<div class="approve"><b>Approval link</b><p>${publicKey()?"Open this link on the device where you set up downloads (Update records, then Download access), or import your key file on this device."
+        :"Downloads are not set up yet, so this request cannot be approved. Set up this device first, publish, then open this link again."}</p>
+      <div class="btns" style="margin-top:10px"><button class="btn small primary" type="button" id="apSetup">${publicKey()?"Open Download access":"Set up downloads"}</button><button class="btn small" type="button" id="apNo">Dismiss</button></div></div>`;
   const done=()=>{access.approve=null;renderAccess()};
   $("#apNo").addEventListener("click",done);
   const approve=async mail=>{
@@ -1065,6 +1067,7 @@ function renderAccess(){
       done();$("#dlStatus").textContent=`Approved ${r.n}'s request.`}
     catch(e){toast("Could not create the link: "+(e&&e.message||"unknown error")+".")}};
   if(owner){$("#apOk").addEventListener("click",()=>approve(true));$("#apCopy").addEventListener("click",()=>approve(false))}
+  else $("#apSetup").addEventListener("click",()=>$("#editLink").click());
 }
 $("#rqBtn").addEventListener("click",async()=>{
   const box=$("#reqBox"),st=$("#dlStatus"),btn=$("#rqBtn");
@@ -1082,7 +1085,11 @@ $("#rqBtn").addEventListener("click",async()=>{
     if(!res.ok||String(j.success)==="false")throw new Error(j.message||"status "+res.status);
     box.hidden=true;["rqName","rqEmail","rqNote"].forEach(id=>$("#"+id).value="");renderAccess();
     st.textContent="Request sent. You will receive an email with a download link once it is approved.";
-  }catch(err){st.textContent=`The request could not be sent. Please email ${to} instead.`}
+  }catch(err){
+    const mail="mailto:"+encodeURIComponent(to)+"?subject="+encodeURIComponent("Biodata download request: "+KIND_LABEL[k])+"&body="+encodeURIComponent(`Name: ${n}\nEmail: ${e}\nDocument: ${KIND_LABEL[k]}\nPurpose: ${p||"-"}\n\nTo approve, open this link:\n${link}`);
+    st.innerHTML=`The request could not be sent automatically. <a href="${esc(mail)}">Send it by email instead</a>; the message is filled in for you.`;
+    if(/activat/i.test(err.message))console.warn("FormSubmit is not activated yet: click the Activate Form link emailed to "+to+".");
+  }
   finally{btn.disabled=false}
 });
 
