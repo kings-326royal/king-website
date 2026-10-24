@@ -6,7 +6,7 @@ window.CV_DATA = {
   "institution": "Sahrdaya College of Engineering and Technology, Thrissur, Kerala (APJ Abdul Kalam Technological University)",
   "email": "kings.326@gmail.com, kings@ieee.org",
   "phone": "+91 94888 83786",
-  "website": "gnanaking.wordpress.com",
+  "website": "",
   "ieee": "100143161",
   "orcid": "0000-0002-1350-852X",
   "scopus": "56440124600",

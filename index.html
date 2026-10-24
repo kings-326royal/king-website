@@ -549,7 +549,7 @@ function infographic(){
     ${items("thesis").length?`<h5>Ph.D. thesis examiner</h5><div>${items("thesis").length} theses evaluated (${esc([...new Set(items("thesis").map(t=>t.text.split(":")[0]))].join(", "))})</div>`:""}
     ${keyItems("talks").length?`<h5>Invited talks and committees</h5><ul>${keyItems("talks").slice(0,2).map(x=>{const t=plain(x.text);const k=t.length>72?t.lastIndexOf(",",72):-1;return `<li>${esc(k>20?t.slice(0,k):t)}</li>`}).join("")}</ul>`:""}
     ${items("memberships").length?`<h5>Professional memberships</h5><div class="mb">${items("memberships").map(m=>`<span>${esc(m.short||plain(m.text))}</span>`).join("")}</div>`:""}</section>
-  <footer class="foot"><span><b>${esc(p.name||"")}</b> · ${esc(p.website||"")}</span><span>Updated ${new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}${(()=>{const pm=primaryMetrics();return pm&&pm.src?" · Citations: "+esc(pm.src):""})()}</span></footer>
+  <footer class="foot"><span><b>${esc(p.name||"")}</b>${p.website?` · ${esc(p.website)}`:""}</span><span>Updated ${new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}${(()=>{const pm=primaryMetrics();return pm&&pm.src?" · Citations: "+esc(pm.src):""})()}</span></footer>
   </div>`;
 }
 
