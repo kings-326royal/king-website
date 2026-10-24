@@ -24,7 +24,7 @@ A single-page academic profile with downloadable biodata. It runs on GitHub Page
 | Standard resume (2–3 pages) | PDF, Word |
 | Full biodata (every record, nothing omitted) | PDF, Word |
 
-- Press **Show preview** to see the document before downloading (also only for you and approved visitors).
+- Press **Show preview** to see the document on the page. Everyone can preview.
 
 The files are built in the browser from `data.js`, so they always match the website.
 
@@ -39,7 +39,7 @@ If you name the repository `<your-username>.github.io`, the site lives at `https
 
 ## Download requests
 
-Visitors see the document list but get **Request download** instead of **Download**. They enter their name, email and an optional purpose, and the request is emailed to you through [FormSubmit](https://formsubmit.co) (free, no account). It goes to **Email for download requests** in **Edit profile details**, or to your first email if that is blank.
+Visitors can choose and preview any document, but get **Request download** instead of **Download**. They enter their name, email and an optional purpose, and the request is emailed to you through [FormSubmit](https://formsubmit.co) (free, no account). It goes to **Email for download requests** in **Edit profile details**, or to your first email if that is blank.
 
 **One-time setup**
 

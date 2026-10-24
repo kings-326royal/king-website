@@ -271,7 +271,7 @@ footer.site button{background:none;border:0;color:var(--muted);text-decoration:u
       <div class="btns">
         <button class="btn primary" id="dlBtn" type="button" hidden>Download</button>
         <button class="btn primary" id="rqBtn" type="button">Request download</button>
-        <button class="btn" id="pvBtn" type="button" hidden>Show preview</button>
+        <button class="btn" id="pvBtn" type="button">Show preview</button>
       </div>
       <div class="status" id="dlStatus" role="status"></div>
       <div id="approveBox"></div>
@@ -799,7 +799,7 @@ function saveBlob(blob,filename){const u=URL.createObjectURL(blob);const a=docum
 let downloads=STATIC?{save:async({filename,data})=>{saveBlob(data instanceof Blob?data:new Blob([data]),filename);return{status:"saved"}}}:null;
 function fileName(kind,fmt){const n=((state.profile||{}).name||"Biodata").replace(/^Dr\.?\s*/i,"").replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"");
   return `${n}_${{infographic:"Infographic",summary:"One_Page_Summary",resume:"Resume",full:"Full_Biodata"}[kind]}.${fmt}`}
-$("#docKind").addEventListener("change",()=>{syncFormats();renderAccess();if(!canDownload($("#docKind").value))$("#preview").hidden=true;else if(!$("#preview").hidden)showPreview()});
+$("#docKind").addEventListener("change",()=>{syncFormats();renderAccess();if(!$("#preview").hidden)showPreview()});
 $("#dlBtn").addEventListener("click",async()=>{
   const st=$("#dlStatus");const kind=$("#docKind").value,fmt=$("#docFmt").value;
   if(!state.loaded){st.textContent="Records are still loading. Try again in a moment.";return}
@@ -825,7 +825,7 @@ function showPreview(){const kind=$("#docKind").value;const host=$("#paperHost")
   host.innerHTML=kind==="infographic"?`<div class="ig-fit">${infographic()}</div>`:`<div class="paper">${toHTML(buildDoc(kind))}</div>`;
   $("#pvTitle").textContent="Preview: "+KIND_LABEL[kind];$("#preview").hidden=false;fitInfographic()}
 window.addEventListener("resize",fitInfographic);
-$("#pvBtn").addEventListener("click",()=>{if(!state.loaded||!canDownload($("#docKind").value))return;showPreview();$("#preview").scrollIntoView({behavior:"smooth",block:"start"})});
+$("#pvBtn").addEventListener("click",()=>{if(!state.loaded)return;showPreview();$("#preview").scrollIntoView({behavior:"smooth",block:"start"})});
 $("#pvClose").addEventListener("click",()=>$("#preview").hidden=true);
 
 /* ---------- page render ---------- */
@@ -1046,7 +1046,7 @@ async function loadAccess(){
 }
 function renderAccess(){
   const kind=$("#docKind").value,owner=isOwner(),ok=canDownload(kind),box=$("#reqBox");
-  $("#dlBtn").hidden=!ok;$("#pvBtn").hidden=!ok;$("#rqBtn").hidden=ok;if(ok)box.hidden=true;
+  $("#dlBtn").hidden=!ok;$("#rqBtn").hidden=ok;if(ok)box.hidden=true;
   $("#rqBtn").textContent=box.hidden?"Request download":"Send request";
   $("#dlHint").textContent=owner?"Choose a version and a file type. Every file is built from the records on this page, so it carries your latest updates."
     :ok?"Your request for this version was approved. Choose a file type and download.":"Choose the version you need and send a request. Once it is approved, you receive a download link by email.";
