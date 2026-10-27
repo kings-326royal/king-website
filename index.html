@@ -269,104 +269,12 @@ footer.site .wrap{display:flex;justify-content:space-between;gap:10px;flex-wrap:
 footer.site button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0;font-size:13px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:6px;font-size:14px;z-index:40;max-width:calc(100% - 32px)}
 @media (prefers-reduced-motion:no-preference){.btn{transition:border-color .15s}}
-
-/* ---------- modern theme ---------- */
-:root{--radius:14px;--shadow:0 1px 2px rgb(16 24 40/.04),0 6px 20px rgb(16 24 40/.06);--shadow-hi:0 2px 4px rgb(16 24 40/.06),0 14px 32px rgb(16 24 40/.10);--gold:#c99a4b;--hero1:#0d1d3d;--hero2:#1f3a68}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--shadow:0 1px 2px rgb(0 0 0/.3);--shadow-hi:0 4px 18px rgb(0 0 0/.4)}}
-:root[data-theme="dark"]{--shadow:0 1px 2px rgb(0 0 0/.3);--shadow-hi:0 4px 18px rgb(0 0 0/.4)}
-body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-
-.topnav{background:color-mix(in srgb,var(--surface) 82%,transparent);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);box-shadow:none;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
-.tn{min-height:62px}
-.tn-brand{display:flex;align-items:center;gap:10px}
-.tn-mono{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--hero2),var(--hero1));color:#f3dcae;font-family:var(--f-display);font-size:14px;letter-spacing:.02em;flex:none}
-.tn-top{border-radius:8px}
-.tn-menu{border-radius:12px;box-shadow:var(--shadow-hi)}
-.tn-dl{border-radius:999px;padding:7px 16px;font-size:13px}
-html{scroll-padding-top:76px}
-.index{top:calc(env(safe-area-inset-top,0px) + 76px)}
-
-.mast{position:relative;overflow:hidden;padding-block:56px 52px;border:0;color:#eef2fa;
-  background:radial-gradient(900px 380px at 88% -10%,rgb(201 154 75/.28),transparent 60%),radial-gradient(700px 400px at -10% 120%,rgb(70 120 200/.30),transparent 60%),linear-gradient(135deg,var(--hero1),var(--hero2))}
-.mast::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgb(255 255 255/.035) 1px,transparent 1px),linear-gradient(90deg,rgb(255 255 255/.035) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 70%);mask-image:linear-gradient(90deg,transparent,#000 70%);pointer-events:none}
-.mast-in{position:relative;z-index:1;gap:36px}
-.mast h1{color:#fff;font-size:clamp(32px,5vw,52px)}
-.mast .role{color:#f3dcae;font-weight:600;margin-top:12px;font-size:15.5px}
-.mast .inst{color:rgb(238 242 250/.78);max-width:70ch}
-.portrait{width:150px;height:150px;border:4px solid rgb(255 255 255/.12);box-shadow:0 0 0 2px var(--gold),0 18px 40px rgb(0 0 0/.35)}
-.contacts{gap:8px 22px;margin-top:16px}
-.contacts a{color:#fff}
-.ct{display:inline-flex;align-items:center;gap:8px;color:#fff}
-.ct svg{width:16px;height:16px;color:var(--gold);flex:none}
-.ids{gap:8px;margin-top:16px}
-.ids a{background:rgb(255 255 255/.07);border:1px solid rgb(255 255 255/.16);color:rgb(238 242 250/.92);border-radius:999px;padding:4px 12px;transition:background .15s,border-color .15s}
-.ids a[href]:hover{background:rgb(255 255 255/.14);border-color:rgb(255 255 255/.32)}
-.ids a b{color:var(--gold)}
-.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-.hero-primary{background:#f3dcae;border-color:#f3dcae;color:#14264a;border-radius:999px;padding:10px 22px;font-weight:600}
-.hero-primary:hover{background:#fff;border-color:#fff}
-.hero-ghost{background:transparent;border-color:rgb(255 255 255/.35);color:#fff;border-radius:999px;padding:10px 22px;font-weight:600}
-.hero-ghost:hover{border-color:#fff;background:rgb(255 255 255/.08)}
-@media (max-width:620px){.mast{padding-block:32px 34px}.mast-in{flex-direction:column;align-items:flex-start;gap:20px}.mast-txt{flex:none;width:100%}.portrait{width:112px;height:112px}}
-
-.btn{border-radius:8px;transition:border-color .15s,background .15s,box-shadow .15s}
-.btn.primary:hover{box-shadow:0 4px 14px rgb(31 58 104/.3)}
-.panel{border-radius:var(--radius);border-color:color-mix(in srgb,var(--line) 75%,transparent);box-shadow:var(--shadow);padding:22px}
-.desk{padding-block:34px 18px;gap:24px}
-.desk .panel{border-top:3px solid var(--gold)}
-select,input[type=text],input[type=email],input[type=number],textarea{border-radius:8px;padding:10px 12px}
-select:focus,input:focus,textarea:focus{outline:0;border-color:var(--navy);box-shadow:0 0 0 3px color-mix(in srgb,var(--navy) 18%,transparent)}
-
-.stats{gap:12px;background:none;border:0;border-radius:0;overflow:visible}
-.stat{border-radius:12px;border:1px solid color-mix(in srgb,var(--line) 75%,transparent);box-shadow:var(--shadow);padding:16px 14px 14px;position:relative;transition:transform .15s,box-shadow .15s}
-.stat::before{content:"";position:absolute;left:14px;top:0;width:26px;height:3px;border-radius:0 0 3px 3px;background:var(--gold)}
-.stat:hover{transform:translateY(-2px);box-shadow:var(--shadow-hi)}
-.stat .v{color:var(--navy);font-size:27px}
-.stat .v.long{font-size:clamp(14px,1.35vw,18px);padding-top:6px}
-.stats{grid-template-columns:repeat(5,minmax(0,1fr))}
-@media (max-width:1100px) and (min-width:881px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.stat .l{font-size:10.5px;letter-spacing:.07em;font-weight:600}
-
-.eyebrow{margin:0 0 4px;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
-.glance{padding-block:26px 18px}
-.glance h2.band,.explore h2.band{font-size:clamp(24px,3vw,30px);margin:0 0 18px;letter-spacing:-.01em}
-.charts{gap:18px}
-
-.ledger{border-top:0;padding-block:20px 72px}
-.sec{padding-top:32px}
-.sec-head{border-bottom:0;padding-bottom:0;margin-bottom:14px}
-.sec-head h2{font-size:clamp(22px,2.6vw,28px)}
-.sec.about{background:var(--surface);border:1px solid color-mix(in srgb,var(--line) 75%,transparent);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-top:26px}
-.about-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:34px}
-.about-grid>div:last-child{border-left:1px solid var(--line);padding-left:34px}
-@media (max-width:860px){.about-grid{grid-template-columns:1fr;gap:10px}.about-grid>div:last-child{border-left:0;padding-left:0}}
-.about .prof-text{font-size:15.5px;line-height:1.7}
-.about .chip{background:var(--accent-soft);border-color:transparent;color:var(--ink);padding:5px 12px;font-size:13px;font-weight:500}
-.contrib-list{list-style:none;padding:0}
-.contrib-list li{position:relative;padding-left:26px;margin:6px 0;line-height:1.5}
-.contrib-list li::before{content:"";position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:50%;background:var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat}
-
-.explore{margin-top:46px}
-.ribbon{margin-top:0;padding:22px;border-radius:var(--radius);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--line) 75%,transparent);gap:18px}
-.ribbon h3{font-size:11px;letter-spacing:.14em;color:var(--accent);margin-bottom:8px}
-.rbtn{border-radius:999px;padding:8px 15px;background:var(--surface);transition:border-color .15s,background .15s,transform .15s,box-shadow .15s}
-.rbtn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
-.rbtn span{background:var(--bg);border-radius:999px;padding:1px 8px;font-size:11.5px}
-.rbtn[aria-expanded="true"] span{background:rgb(255 255 255/.18)}
-.ribbon~.sec{background:var(--surface);border:1px solid color-mix(in srgb,var(--line) 75%,transparent);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 26px;margin-top:20px}
-.item{padding:12px 0}
-.item .yr{color:var(--accent);font-weight:500}
-.tag{border-radius:999px;padding:2px 9px}
-
-footer.site{background:linear-gradient(135deg,var(--hero1),var(--hero2));color:rgb(238 242 250/.8);border:0;padding-block:26px 30px}
-footer.site button{color:rgb(238 242 250/.8)}
 </style>
 </head>
 <body>
 
 <nav class="topnav" aria-label="Main"><div class="wrap tn">
-  <a class="tn-brand" href="#" id="tnBrand"><span class="tn-mono" id="tnMono" aria-hidden="true">GK</span><span id="tnName">Dr. G. R. Gnana King</span></a>
+  <a class="tn-brand" href="#" id="tnBrand">Dr. G. R. Gnana King</a>
   <button class="btn small tn-toggle" type="button" id="tnToggle" aria-expanded="false" aria-controls="tnList">Menu</button>
   <ul class="tn-list" id="tnList"></ul>
 </div></nav>
@@ -414,12 +322,12 @@ footer.site button{color:rgb(238 242 250/.8)}
   </section>
 
   <section class="glance" aria-labelledby="glanceH">
-    <p class="eyebrow">Overview</p><h2 class="band" id="glanceH">Research at a glance</h2>
+    <h2 class="band" id="glanceH">Research at a glance</h2>
     <div class="charts" id="charts"></div>
   </section>
 
   <section class="glance" aria-labelledby="metH">
-    <p class="eyebrow">Impact</p><h2 class="band" id="metH">Citation metrics</h2>
+    <h2 class="band" id="metH">Citation metrics</h2>
     <div class="charts" id="metrics"></div>
   </section>
 
@@ -967,15 +875,11 @@ function renderMast(){
     ["Scholar",p.scholar,p.scholar&&"https://scholar.google.com/citations?user="+p.scholar],["WoS",p.wos,p.wos&&"https://www.webofscience.com/wos/author/record/"+p.wos],
     ["Vidwan",p.vidwan,p.vidwan&&"https://vidwan.inflibnet.ac.in/profile/"+p.vidwan],["IEEE SM",p.ieee,null]].filter(x=>x[1]);
   const ini=String(p.name||"").replace(/^Dr\.?\s*/i,"").split(/[\s.]+/).filter(Boolean);const mono=(ini[ini.length-2]||"").charAt(0)+(ini[ini.length-1]||"").charAt(0);
-  $("#tnName").textContent=p.name||"Profile";
-  $("#tnMono").textContent=mono.toUpperCase()||"GK";
-  const ico={mail:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
-    tel:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5l2.6.4 1.2 4-2 1.5a12 12 0 0 0 6.2 6.2l1.5-2 4 1.2.4 2.6c0 1-1 1.9-2.2 1.8C10.6 18.6 5.4 13.4 4.8 5.7 4.7 4.5 5.6 3.5 6.6 3.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>'};
+  $("#tnBrand").textContent=p.name||"Profile";
   m.innerHTML=`${p.photo?`<img class="portrait" src="${esc(p.photo)}" alt="Portrait of ${esc(p.name)}">`:`<div class="portrait" aria-hidden="true">${esc(mono)}</div>`}
    <div class="mast-txt"><h1>${esc(p.name)}</h1><p class="role">${esc(p.designation)}</p><p class="inst">${esc([p.department,p.institution].filter(Boolean).join(", "))}</p>
-   <div class="contacts">${[["mail",p.email],["tel",p.phone]].filter(x=>x[1]).map(([k,c])=>`<span class="ct">${ico[k]}<span>${esc(c)}</span></span>`).join("")}${p.website?`<a href="${esc(/^https?:/.test(p.website)?p.website:"https://"+p.website)}" target="_blank" rel="noopener">${esc(p.website)}</a>`:""}</div>
-   <div class="ids">${idl.map(([l,v,u])=>u?`<a href="${esc(u)}" target="_blank" rel="noopener"><b>${l}</b>${esc(v)}</a>`:`<a><b>${l}</b>${esc(v)}</a>`).join("")}</div>
-   <div class="cta"><button type="button" class="btn hero-primary" data-go="sec:journals">View publications</button><button type="button" class="btn hero-ghost" data-go="id:download">Download biodata</button></div></div>`;
+   <div class="contacts">${[p.email,p.phone].filter(Boolean).map(c=>`<span>${esc(c)}</span>`).join("")}${p.website?`<a href="${esc(/^https?:/.test(p.website)?p.website:"https://"+p.website)}" target="_blank" rel="noopener">${esc(p.website)}</a>`:""}</div>
+   <div class="ids">${idl.map(([l,v,u])=>u?`<a href="${esc(u)}" target="_blank" rel="noopener"><b>${l}</b>${esc(v)}</a>`:`<a><b>${l}</b>${esc(v)}</a>`).join("")}</div></div>`;
 }
 function renderStats(){const p=state.profile||{};$("#stats").innerHTML=stats().map(([v,l])=>`<div class="stat"><div class="v${v.length>6?" long":""}">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("");
   const pm=primaryMetrics();$("#statNote").textContent="Counted from the records below, so adding a record updates them straight away."+(pm?` Citations and h-index: ${pm.src||"entered by hand"}${pm.updated?", updated "+fmtDate(pm.updated):""}.`:"")}
@@ -1060,7 +964,6 @@ $("#tnList").addEventListener("click",ev=>{
   const was=b.getAttribute("aria-expanded")==="true";closeMenus(false);b.setAttribute("aria-expanded",String(!was));
 });
 $("#tnToggle").addEventListener("click",()=>{const o=$("#tnList").classList.toggle("open");$("#tnToggle").setAttribute("aria-expanded",String(o));if(!o)closeMenus(false)});
-$("#mast").addEventListener("click",ev=>{const g=ev.target.closest("[data-go]");if(g)navGo(g.dataset.go)});
 $("#tnBrand").addEventListener("click",ev=>{ev.preventDefault();closeMenus(true);scrollTo({top:0,behavior:"smooth"})});
 document.addEventListener("click",ev=>{if(!ev.target.closest(".topnav"))closeMenus(true)});
 document.addEventListener("keydown",ev=>{if(ev.key==="Escape")closeMenus(true)});
@@ -1077,17 +980,15 @@ function renderMain(){
   if(!state.loaded){main.innerHTML=`<div class="empty">Loading records…</div>`;return}
   if(!state.dbOK){main.innerHTML=`<div class="empty">The records could not be loaded in this view. Sign in to claude.ai and open the page again.</div>`;return}
   const p=state.profile||{};const ed=state.editing;let h="";
-  h+=`<section class="sec about" id="sec-profile"><p class="eyebrow">Profile</p><div class="sec-head"><h2>About</h2>${ed?`<button class="btn small" data-act="editprofile">Edit profile details</button>`:""}</div>`;
+  h+=`<section class="sec" id="sec-profile"><div class="sec-head"><h2>About</h2>${ed?`<button class="btn small" data-act="editprofile">Edit profile details</button>`:""}</div>`;
   if(ed&&state.openForm==="profile")h+=formHTML(PROFILE_FIELDS,p,"pf-",false);
-  h+=`<div class="about-grid"><div>`;
   h+=p.summary?`<p class="prof-text">${rich(p.summary)}</p>`:`<p class="hint">${ed?"Add a profile summary with the button above.":"No profile summary yet."}</p>`;
   if(p.interests)h+=`<p class="prof-text" id="about-interests"><b>Research interests:</b> ${rich(p.interests)}</p>`;
-  h+=`</div><div>`;
   if(lines(p.expertise).length)h+=`<p class="prof-text" id="about-expertise" style="margin-bottom:0"><b>Areas of expertise</b></p><div class="chips">${lines(p.expertise).map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>`;
-  if(lines(p.contributions).length)h+=`<p class="prof-text" id="about-contrib" style="margin-bottom:4px"><b>Key research contributions</b></p><ul class="prof-text contrib-list" style="margin-top:0">${lines(p.contributions).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
-  h+=`</div></div></section>`;
+  if(lines(p.contributions).length)h+=`<p class="prof-text" id="about-contrib" style="margin-bottom:4px"><b>Key research contributions</b></p><ul class="prof-text" style="margin-top:0">${lines(p.contributions).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+  h+=`</section>`;
   const groups=[...new Set(SECTIONS.map(s=>s.group))],open=SEC[state.openSec];
-  h+=`<div class="explore"><p class="eyebrow">Portfolio</p><h2 class="band">Explore the records</h2></div><nav class="ribbon" aria-label="Record sections">`+groups.map(g=>`<div class="rg"><h3>${g}</h3><div class="rb">`+SECTIONS.filter(s=>s.group===g).map(s=>
+  h+=`<nav class="ribbon" aria-label="Record sections">`+groups.map(g=>`<div class="rg"><h3>${g}</h3><div class="rb">`+SECTIONS.filter(s=>s.group===g).map(s=>
     `<button type="button" class="rbtn" data-act="opensec" data-s="${s.key}" aria-expanded="${open===s}" aria-controls="sec-${s.key}">${esc(s.title)}<span>${items(s.key).length}</span></button>`).join("")+`</div></div>`).join("")+`</nav>`;
   if(!open)h+=`<p class="hint ribbon-hint">Choose a section above to see its records.</p>`;
   [open].filter(Boolean).forEach(s=>{const list=items(s.key);
