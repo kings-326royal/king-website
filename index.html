@@ -1045,7 +1045,9 @@ $("#main").addEventListener("change",async ev=>{const inp=ev.target.closest("[da
 const DRAFT_KEY="gk-biodata-draft",GH_KEY="gk-github-settings";
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 let db=null;
-function snapshot(){return{profile:state.profile,sections:state.sections,updatedAt:new Date().toISOString().slice(0,10)}}
+function snapshot(){return{profile:state.profile,sections:state.sections,updatedAt:new Date().toISOString().slice(0,10),base:state.base}}
+// Fingerprint of the published records a draft started from, so publishing can tell when GitHub changed in the meantime
+function fingerprint(o){const s=JSON.stringify({p:o.profile||null,s:o.sections||{}});let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
 function dataFile(){return "/* Biodata records for the profile site. Edit on the site (Update records) and publish, or edit this JSON by hand. */\nwindow.CV_DATA = "+JSON.stringify(snapshot(),null,1)+";\n"}
 function persistDraft(){state.dirty=true;if(!ls.set(DRAFT_KEY,JSON.stringify(snapshot())))toast("This browser would not keep the draft. Publish or download data.js before closing the page.")}
 async function saveSection(key,list){
@@ -1068,10 +1070,13 @@ async function publishGitHub(){
   const hdr={"Authorization":"Bearer "+g.token,"Accept":"application/vnd.github+json"};
   try{
     let sha;const cur=await fetch(api+"?ref="+encodeURIComponent(g.branch),{headers:hdr});
-    if(cur.ok)sha=(await cur.json()).sha;else if(cur.status!==404)throw new Error(cur.status===401?"the token was rejected":"GitHub answered "+cur.status);
+    if(cur.ok){const c=await cur.json();sha=c.sha;
+      let remote=null;try{const t=new TextDecoder().decode(Uint8Array.from(atob(c.content.replace(/\s/g,"")),ch=>ch.charCodeAt(0)));remote=JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1))}catch(e){}
+      if(remote){const rf=fingerprint(remote);if(rf!==state.base&&rf!==fingerprint(snapshot())&&!confirm(`The records on GitHub were updated (${remote.updatedAt||"recently"}) after the changes in this browser were started. Publishing now would replace those updates with this browser's version.\n\nChoose Cancel, then use "Download data.js" and merge the two, unless you are sure.`))return}}
+    else if(cur.status!==404)throw new Error(cur.status===401?"the token was rejected":"GitHub answered "+cur.status);
     const r=await fetch(api,{method:"PUT",headers:hdr,body:JSON.stringify({message:"Update biodata records",content:b64utf8(dataFile()),branch:g.branch,sha})});
     if(!r.ok)throw new Error(r.status===401||r.status===403?"the token cannot write to this repository":r.status===404?"the repository or branch was not found":"GitHub answered "+r.status);
-    ls.del(DRAFT_KEY);state.dirty=false;render();toast("Published. The live site updates in about a minute.");
+    ls.del(DRAFT_KEY);state.dirty=false;state.base=fingerprint(snapshot());render();toast("Published. The live site updates in about a minute.");
   }catch(e){toast("Could not publish: "+e.message+".")}
 }
 $("#main").addEventListener("click",async ev=>{
@@ -1204,7 +1209,8 @@ $("#rqBtn").addEventListener("click",async()=>{
 /* ---------- boot ---------- */
 function loadStatic(ignoreDraft){
   const base=window.CV_DATA||{};let src=base;state.dirty=false;
-  if(!ignoreDraft){try{const d=JSON.parse(ls.get(DRAFT_KEY)||"null");if(d&&d.sections){src=d;state.dirty=true;state.canEdit=true}}catch(e){}}
+  state.base=fingerprint(base);
+  if(!ignoreDraft){try{const d=JSON.parse(ls.get(DRAFT_KEY)||"null");if(d&&d.sections){src=d;state.dirty=true;state.canEdit=true;state.base=d.base||null}}catch(e){}}
   state.profile=src.profile?JSON.parse(JSON.stringify(src.profile)):null;
   if(state.profile)delete state.profile.website; // retired field; the documents link to SITE_URL
   state.sections=JSON.parse(JSON.stringify(src.sections||{}));

@@ -112,21 +112,21 @@ window.CV_DATA = {
   "books": [
    {
     "id": "b1",
-    "text": "“Machine learning based devices for pregnant women,” in *Predicting Pregnancy Complications Through Artificial Intelligence and Machine Learning*, IGI Global, 2023, ch. 11, pp. 199–204. ISBN 9781668489741.",
+    "text": "“Machine learning based devices for pregnant women,” in *Predicting Pregnancy Complications Through Artificial Intelligence and Machine Learning*, IGI Global, 2023, ch. 11, pp. 199–204. ISBN 9781668489741. ISBN-10 1668489740, E-ISBN 9781668489765. doi: 10.4018/979-8-3693-1718-1.ch011. https://www.igi-global.com/chapter/machine-learning-based-devices-for-pregnant-women/332216",
     "year": "2023",
     "key": true,
     "kind": "Chapter"
    },
    {
     "id": "b2",
-    "text": "“Intelligent 5G networks and augmented virtual reality in smart transportation,” in *Artificial Intelligence in Cyber Physical Systems: Principles and Applications*, CRC Press, Feb. 2023. ISBN 9781032164830.",
+    "text": "“Intelligent 5G networks and augmented virtual reality in smart transportation,” in *Artificial Intelligence in Cyber Physical Systems: Principles and Applications*, CRC Press, Feb. 2023. ISBN 9781032164830. https://www.routledge.com/Artificial-Intelligence-in-Cyber-Physical-Systems-Principles-and-Applications/Sagar-Nand-Kumar-Das-Sahana/p/book/9781032164830",
     "year": "2023",
     "key": true,
     "kind": "Chapter"
    },
    {
     "id": "b3",
-    "text": "“Technical assessment of various image stitching techniques: a deep learning approach,” in *Handbook of Deep Learning in Biomedical Engineering and Health Informatics*, Apple Academic Press, Aug. 2021.",
+    "text": "“Technical assessment of various image stitching techniques: a deep learning approach,” in *Handbook of Deep Learning in Biomedical Engineering and Health Informatics*, Apple Academic Press, Aug. 2021. http://www.appleacademicpress.com/handbook-of-deep-learning-in-biomedical-engineering-and-health-informatics-/9781771889988",
     "year": "2021",
     "key": true,
     "kind": "Chapter"
@@ -198,14 +198,14 @@ window.CV_DATA = {
    },
    {
     "id": "c8",
-    "text": "A. Ashok, J. Joseph, Richin, J. Jipson, G. R. Gnana King and K. Vidyamol, “HELFER – automatic load-carrying robot,” in *Soft Computing for Security Applications (ICSCS 2023)*, AISC vol. 1449, Springer, 2023. doi: 10.1007/978-981-99-3608-3_48",
+    "text": "A. Ashok, J. Joseph, Richin, J. Jipson, G. R. Gnana King and K. Vidyamol, “HELFER – automatic load-carrying robot,” in *Soft Computing for Security Applications (ICSCS 2023)*, AISC vol. 1449, Springer, 2023. doi: 10.1007/978-981-99-3608-3_48 Presented at ICSCS 2023, Dhirajlal Gandhi College of Technology, Salem, 17–18 Apr 2023.",
     "year": "2023",
     "key": false,
     "index": "Springer"
    },
    {
     "id": "c9",
-    "text": "Riyafathima, L. Poulose, L. M. Francis, K. Vidyamol, J. Jacob and G. R. Gnana King, “Escasalus – ML-based food quality checker,” in *Soft Computing for Security Applications (ICSCS 2023)*, AISC vol. 1449, Springer, 2023. doi: 10.1007/978-981-99-3608-3_8",
+    "text": "Riyafathima, L. Poulose, L. M. Francis, K. Vidyamol, J. Jacob and G. R. Gnana King, “Escasalus – ML-based food quality checker,” in *Soft Computing for Security Applications (ICSCS 2023)*, AISC vol. 1449, Springer, 2023. doi: 10.1007/978-981-99-3608-3_8 Presented at ICSCS 2023, Dhirajlal Gandhi College of Technology, Salem, 17–18 Apr 2023.",
     "year": "2023",
     "key": false,
     "index": "Springer"
@@ -714,7 +714,7 @@ window.CV_DATA = {
    },
    {
     "id": "j10",
-    "text": "J. Sebastian and G. R. Gnana King, “Analysis of MRI and SPECT image fusion in the wavelet domain for brain tumor detection,” in *Advances in Distributed Computing and Machine Learning*, Lecture Notes in Networks and Systems, vol. 427, Springer, 2022. doi: 10.1007/978-981-19-1018-0_53",
+    "text": "J. Sebastian and G. R. Gnana King, “Analysis of MRI and SPECT image fusion in the wavelet domain for brain tumor detection,” in *Advances in Distributed Computing and Machine Learning*, Lecture Notes in Networks and Systems, vol. 427, Springer, 2022. doi: 10.1007/978-981-19-1018-0_53 ISBN 978-981-19-1017-3.",
     "year": "2022",
     "key": false,
     "index": "Scopus"
@@ -814,7 +814,7 @@ window.CV_DATA = {
    },
    {
     "id": "j25",
-    "text": "G. R. Gnana King, “A low-cost embedded stereo vision system for real-time applications using Raspberry Pi,” *International Journal of Research*, vol. 4, no. 13, pp. 148–154, Oct. 2017.",
+    "text": "G. R. Gnana King, “A low-cost embedded stereo vision system for real-time applications using Raspberry Pi,” *International Journal of Research*, vol. 4, no. 13, pp. 148–154, Oct. 2017. Available at https://edupediapublications.org/journals/index.php/IJR/",
     "year": "2017",
     "key": false
    },
@@ -826,13 +826,13 @@ window.CV_DATA = {
    },
    {
     "id": "j27",
-    "text": "G. R. Gnana King et al., “Algorithm based personal identification using iris recognition,” *International Journal of Novel Research in Electronics and Communication*, vol. 3, no. 1, pp. 15–22, 2016.",
+    "text": "G. R. Gnana King et al., “Algorithm based personal identification using iris recognition,” *International Journal of Novel Research in Electronics and Communication*, vol. 3, no. 1, pp. 15–22, 2016. Available at www.noveltyjournals.com.",
     "year": "2016",
     "key": false
    },
    {
     "id": "j28",
-    "text": "G. R. Gnana King et al., “An efficient video watermarking scheme for concealing data records using LabVIEW,” *International Journal of Recent Trends in Engineering & Research*, vol. 2, no. 4, Apr. 2016.",
+    "text": "G. R. Gnana King et al., “An efficient video watermarking scheme for concealing data records using LabVIEW,” *International Journal of Recent Trends in Engineering & Research*, vol. 2, no. 4, Apr. 2016. ISSN 2455-1457.",
     "year": "2016",
     "key": false
    },
@@ -1089,7 +1089,37 @@ window.CV_DATA = {
    },
    {
     "id": "tr7",
-    "text": "Infosys Springboard: Introduction to Data Science, AI, Deep Learning, RPA, NLP and Computer Vision 101, 16–21 Feb 2025",
+    "text": "Infosys Springboard: Computer Vision 101, 21 Feb 2025",
+    "year": "2025",
+    "key": false
+   },
+   {
+    "id": "tr57",
+    "text": "Infosys Springboard: Introduction to Natural Language Processing, 20 Feb 2025",
+    "year": "2025",
+    "key": false
+   },
+   {
+    "id": "tr58",
+    "text": "Infosys Springboard: Introduction to Robotic Process Automation, 19 Feb 2025",
+    "year": "2025",
+    "key": false
+   },
+   {
+    "id": "tr59",
+    "text": "Infosys Springboard: Introduction to Deep Learning, 18 Feb 2025",
+    "year": "2025",
+    "key": false
+   },
+   {
+    "id": "tr60",
+    "text": "Infosys Springboard: Introduction to Artificial Intelligence, 17 Feb 2025",
+    "year": "2025",
+    "key": false
+   },
+   {
+    "id": "tr61",
+    "text": "Infosys Springboard: Introduction to Data Science, 16 Feb 2025",
     "year": "2025",
     "key": false
    },
@@ -1389,5 +1419,5 @@ window.CV_DATA = {
    }
   ]
  },
- "updatedAt": "2026-10-24"
+ "updatedAt": "2026-10-29"
 };
