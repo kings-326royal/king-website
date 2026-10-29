@@ -610,7 +610,8 @@ function infographic(){
 
 /* ---------- document model ---------- */
 const SITE_URL="https://kings-326royal.github.io/king-website/";
-function webLink(p){const u=String(p.website||"").trim();return u?(/^https?:/i.test(u)?u:"https://"+u):SITE_URL}
+// Documents always point to this site, even if an old Website value survives in a browser draft
+const webLink=()=>SITE_URL;
 const webShort=u=>u.replace(/^https?:\/\//i,"").replace(/\/$/,"");
 // "Dr. G. R. Gnana King" -> "Gnana King": the name the website link carries
 const webLabel=p=>String(p.name||"").replace(/^Dr\.?\s*/i,"").split(/\s+/).filter(w=>w.replace(/\./g,"").length>1).join(" ")||webShort(webLink(p));
