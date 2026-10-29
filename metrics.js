@@ -1,6 +1,6 @@
 /* Citation metrics, written automatically by scripts/update_metrics.py. Do not edit by hand. */
 window.CV_METRICS = {
- "updated": "2026-10-26",
+ "updated": "2026-10-29",
  "errors": {
   "scholar": "Last fetch failed (HTTP Error 403: Forbidden); showing the previous figures.",
   "scopus": "No SCOPUS_API_KEY set; add it as a repository secret to enable this source.",
