@@ -389,7 +389,7 @@ const SECTIONS=[
 ];
 const SEC=Object.fromEntries(SECTIONS.map(s=>[s.key,s]));
 const PROFILE_FIELDS=[T("photo","Photo",{type:"photo"}),T("name","Name"),T("shortTitle","Short title (infographic)"),T("designation","Designation line"),T("department","Department"),T("institution","Institution"),T("ribbon","Highlight ribbon (infographic)"),
- T("email","Email(s), comma separated"),T("requestEmail","Email for download requests (blank: first email above)"),T("phone","Phone"),T("website","Website"),
+ T("email","Email(s), comma separated"),T("requestEmail","Email for download requests (blank: first email above)"),T("phone","Phone"),
  T("ieee","IEEE membership no."),T("orcid","ORCID"),T("scopus","Scopus author ID"),T("scholar","Google Scholar ID"),T("wos","Web of Science ID"),T("vidwan","Vidwan ID"),
  T("careerStart","Teaching career start year",{type:"number"}),T("citations","Citations (manual, used only when no automatic figure)"),T("hindex","h-index (manual fallback)"),T("metricsNote","Source of the manual figures"),
  T("summary","Profile summary",{type:"area"}),T("interests","Research interests",{type:"area"}),
@@ -901,7 +901,7 @@ function renderMast(){
   $("#tnBrand").textContent=p.name||"Profile";
   m.innerHTML=`${p.photo?`<img class="portrait" src="${esc(p.photo)}" alt="Portrait of ${esc(p.name)}">`:`<div class="portrait" aria-hidden="true">${esc(mono)}</div>`}
    <div class="mast-txt"><h1>${esc(p.name)}</h1><p class="role">${esc(p.designation)}</p><p class="inst">${esc([p.department,p.institution].filter(Boolean).join(", "))}</p>
-   <div class="contacts">${[p.email,p.phone].filter(Boolean).map(c=>`<span>${esc(c)}</span>`).join("")}${p.website?`<a href="${esc(/^https?:/.test(p.website)?p.website:"https://"+p.website)}" target="_blank" rel="noopener">${esc(p.website)}</a>`:""}</div>
+   <div class="contacts">${[p.email,p.phone].filter(Boolean).map(c=>`<span>${esc(c)}</span>`).join("")}</div>
    <div class="ids">${idl.map(([l,v,u])=>u?`<a href="${esc(u)}" target="_blank" rel="noopener"><b>${l}</b>${esc(v)}</a>`:`<a><b>${l}</b>${esc(v)}</a>`).join("")}</div></div>`;
 }
 function renderStats(){const p=state.profile||{};$("#stats").innerHTML=stats().map(([v,l])=>`<div class="stat"><div class="v${v.length>6?" long":""}">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("");
@@ -1206,6 +1206,7 @@ function loadStatic(ignoreDraft){
   const base=window.CV_DATA||{};let src=base;state.dirty=false;
   if(!ignoreDraft){try{const d=JSON.parse(ls.get(DRAFT_KEY)||"null");if(d&&d.sections){src=d;state.dirty=true;state.canEdit=true}}catch(e){}}
   state.profile=src.profile?JSON.parse(JSON.stringify(src.profile)):null;
+  if(state.profile)delete state.profile.website; // retired field; the documents link to SITE_URL
   state.sections=JSON.parse(JSON.stringify(src.sections||{}));
   state.updatedAt=base.updatedAt||null;state.loaded=true;state.metrics=window.CV_METRICS||null;
   render();if(!$("#preview").hidden)showPreview();
