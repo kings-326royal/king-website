@@ -43,7 +43,7 @@ Visitors can choose and preview any document, but get **Request download** inste
 
 **One-time setup**
 
-1. On your own computer, open the live site, click **Update records**, open **Download access** and click **Set up this device**. Then click **Publish to GitHub**. From now on this browser downloads everything without a request.
+1. On your own computer, sign in at https://kings-326royal.github.io/king-website/#edit (see *Who can edit*), open **Download access** and click **Set up this device**. Then click **Publish to GitHub**. From now on this browser downloads everything without a request.
 2. Click **Save key file** and keep the file somewhere private. To use another computer or phone, open **Download access** there and choose **Import key file**.
 3. Send yourself a test request from a private window. The first time, FormSubmit emails you an **Activate** link; click it, or no requests will reach you.
 
@@ -55,9 +55,27 @@ If you click **Create a new key**, links approved earlier stop working.
 
 This is a static site, so the records themselves are visible on the page to everyone. The request step controls the ready-made downloads, not the data, and a technically skilled person could get around it.
 
-## Update your records later
+## Who can edit
 
-Open your live site and click **Update records** at the bottom of the page. You can also add `#edit` to the address. The editor appears in the left column.
+Visitors cannot edit. The **Update records** button is hidden from them, and opening the editor asks for a GitHub sign-in. Only someone whose GitHub access token has **write access to `kings-326royal/king-website`** gets in: you, or a person you add on GitHub under **Settings → Collaborators** with the **Write** role (they create their own token).
+
+The sign-in guards the editor, unpublished drafts and the **Download access** setup. The published records were never at risk: changing the live site has always needed write access to the repository.
+
+### Sign in on your device (once per device)
+
+1. Create a GitHub access token:
+   1. On GitHub, open **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
+   2. Under **Repository access**, choose **Only select repositories** and pick `king-website`.
+   3. Under **Permissions → Repository permissions**, set **Contents** to **Read and write**.
+   4. Generate the token and copy it. It starts with `github_pat_`.
+2. Open https://kings-326royal.github.io/king-website/#edit, paste the token and click **Sign in**. The site asks GitHub whether the token's account can write to the repository, and opens the editor only if it can.
+3. From then on, **Update records** appears at the bottom of the page on that device. If the token is deleted or expires, the device is signed out the next time the editor opens.
+
+The token is kept only in that browser. Click **Sign out** in the editor before leaving a shared computer, and delete the token on GitHub if a device is lost.
+
+## Update the records later
+
+On a signed-in device, click **Update records** at the bottom of the page (or open https://kings-326royal.github.io/king-website/#edit). The editor appears in the left column.
 
 - **Edit mode** adds **+ Add** to every section and **Edit / ↑ / ↓ / Delete** to every record.
 - Tick **Show in resume and summary** on the records that should appear in the standard resume and one-page summary. The full biodata always includes everything.
@@ -65,20 +83,11 @@ Open your live site and click **Update records** at the bottom of the page. You 
 - In a citation, put text between `*single stars*` for italics (journal names) or `**double stars**` for bold.
 - Your edits are kept in this browser until you publish them. Visitors see nothing until you publish.
 
-Then publish in one of two ways.
+Then publish in one of three ways.
 
 ### Option A: one click (recommended)
 
-Create a GitHub access token once:
-
-1. On GitHub, open **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
-2. Under **Repository access**, choose **Only select repositories** and pick your profile repository.
-3. Under **Permissions → Repository permissions**, set **Contents** to **Read and write**.
-4. Generate the token and copy it. It starts with `github_pat_`.
-
-On your site, open **GitHub settings** in the editor. Enter the repository (for example `yourname/gnanaking-profile`), branch `main`, file `data.js` and the token. Click **Save settings on this device**. From then on, **Publish to GitHub** writes your changes to the repository, and the live site updates within about a minute.
-
-The token is stored only in that browser on that computer. Use it only on your own device, and delete the token on GitHub if the device is shared or lost.
+Click **Publish to GitHub**. Signing in already filled in **GitHub settings** (repository `kings-326royal/king-website`, branch `main`, file `data.js` and your token), so the changes go straight to the repository and the live site updates within about a minute.
 
 ### Option B: upload the file
 

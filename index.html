@@ -272,6 +272,13 @@ footer.site .wrap{display:flex;justify-content:space-between;gap:10px;flex-wrap:
 footer.site button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0;font-size:13px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:6px;font-size:14px;z-index:40;max-width:calc(100% - 32px)}
 @media (prefers-reduced-motion:no-preference){.btn{transition:border-color .15s}}
+dialog.signin{border:1px solid var(--line);border-radius:12px;padding:22px 22px 18px;width:min(440px,calc(100% - 32px));background:var(--surface);color:var(--ink);box-shadow:0 18px 50px rgb(0 0 0/.25)}
+dialog.signin::backdrop{background:rgb(10 16 30/.5)}
+dialog.signin h2{font-family:var(--f-display);font-size:21px;margin:0 0 8px}
+dialog.signin p{margin:0 0 12px;font-size:14px}
+dialog.signin input{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:14.5px;text-transform:none;letter-spacing:0;font-weight:400;width:100%;color:var(--ink)}
+dialog.signin .msg{min-height:20px;margin:10px 0 0;font-size:13.5px;color:var(--danger)}
+dialog.signin .note{margin:12px 0 0;font-size:12.5px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -347,7 +354,15 @@ footer.site button{background:none;border:0;color:var(--muted);text-decoration:u
     <main id="main"><div class="empty">Loading records…</div></main>
   </section>
 </div>
-<footer class="site"><div class="wrap"><span id="foot"></span><button type="button" id="editLink">Update records</button></div></footer>
+<footer class="site"><div class="wrap"><span id="foot"></span><button type="button" id="editLink" hidden>Update records</button></div></footer>
+<dialog class="signin" id="signin" aria-labelledby="signinH"><form id="signinForm" novalidate>
+  <h2 id="signinH">Owner sign-in</h2>
+  <p>Only people with write access to the GitHub repository <b id="signinRepo"></b> can update these records.</p>
+  <label class="f" for="siToken">GitHub access token<input type="password" id="siToken" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
+  <p class="msg" id="siMsg" role="status"></p>
+  <div class="btns" style="margin-top:6px"><button class="btn primary" type="submit" id="siGo">Sign in</button><button class="btn" type="button" id="siCancel">Cancel</button></div>
+  <p class="note">The token is checked with GitHub and kept only in this browser. Visitors never see the editor.</p>
+</form></dialog>
 <div class="toast" id="toast" hidden></div>
 <div class="tip" id="tip" hidden></div>
 <script src="data.js"></script>
@@ -915,7 +930,7 @@ function renderNav(){
   $("#editSlot").innerHTML=`<div class="editbar">
     <label class="check" for="editToggle"><input type="checkbox" id="editToggle" ${state.editing?"checked":""}> Edit mode</label>
     ${STATIC?`<span>${state.dirty?`<span class="dirty">Unpublished changes.</span> They stay in this browser until you publish them.`:"Changes stay in this browser until you publish them."}</span>
-    <div class="btns" style="margin-top:0"><button class="btn small primary" type="button" id="ghPublish">Publish to GitHub</button><button class="btn small" type="button" id="dlData">Download data.js</button>${state.dirty?`<button class="btn small danger" type="button" id="discard">Discard changes</button>`:""}</div>
+    <div class="btns" style="margin-top:0"><button class="btn small primary" type="button" id="ghPublish">Publish to GitHub</button><button class="btn small" type="button" id="dlData">Download data.js</button><button class="btn small" type="button" id="signOut">Sign out</button>${state.dirty?`<button class="btn small danger" type="button" id="discard">Discard changes</button>`:""}</div>
     <details${gh.repo?"":" open"}><summary style="cursor:pointer">GitHub settings</summary><div class="pub">
       <label class="f" for="ghRepo">Repository (owner/name)<input type="text" id="ghRepo" value="${esc(gh.repo||"")}" placeholder="username/repository"></label>
       <div class="row"><label class="f" for="ghBranch">Branch<input type="text" id="ghBranch" value="${esc(gh.branch||"main")}"></label><label class="f" for="ghPath">File<input type="text" id="ghPath" value="${esc(gh.path||"data.js")}"></label></div>
@@ -931,7 +946,12 @@ function renderNav(){
   const on=(id,fn)=>{const el=$("#"+id);if(el)el.addEventListener("click",fn)};
   on("dlData",()=>{saveBlob(new Blob([dataFile()],{type:"text/javascript"}),"data.js");toast("Downloaded data.js")});
   on("discard",()=>{ls.del(DRAFT_KEY);loadStatic(true);toast("Changes discarded")});
-  on("ghSave",()=>{ls.set(GH_KEY,JSON.stringify(readGh()));toast("Settings saved on this device")});
+  on("ghSave",async()=>{const g=readGh(),o=ghSettings();
+    if(g.token!==o.token){if(!g.token){toast("Enter the access token, or use Sign out.");return}
+      try{const c=await checkToken(g.token);if(!c.ok){toast(c.msg);return}g.verified=REPO}catch(e){toast("Could not reach GitHub to check the new token.");return}}
+    else g.verified=o.verified;
+    ls.set(GH_KEY,JSON.stringify(g));toast("Settings saved on this device")});
+  on("signOut",()=>signOut(true));
   on("ghPublish",publishGitHub);
   on("akSetup",setupOwnerKey);
   on("akExport",()=>{saveBlob(new Blob([ls.get(OWNER_KEY)],{type:"application/json"}),"biodata-owner-key.json");toast("Saved the key file. Keep it private.")});
@@ -1030,7 +1050,7 @@ function renderMain(){
   const f=main.querySelector("form.form");if(f){const first=f.querySelector("textarea,input[type=text]");first&&first.focus({preventScroll:true})}
 }
 function renderFoot(){$("#foot").textContent=`© ${new Date().getFullYear()} ${(state.profile||{}).name||""}`+(state.updatedAt?` · Records updated ${state.updatedAt}`:"")}
-function render(){renderMast();renderStats();renderCharts();renderMetrics();renderNav();renderMain();renderFoot();renderAccess();if(state.profile&&state.profile.name)document.title=state.profile.name}
+function render(){if(STATIC)$("#editLink").hidden=!signedIn();renderMast();renderStats();renderCharts();renderMetrics();renderNav();renderMain();renderFoot();renderAccess();if(state.profile&&state.profile.name)document.title=state.profile.name}
 
 /* ---------- photo input ---------- */
 function shrinkPhoto(file){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=()=>rej(new Error("read"));r.onload=()=>{const im=new Image();im.onerror=()=>rej(new Error("decode"));im.onload=()=>{
@@ -1043,6 +1063,7 @@ $("#main").addEventListener("change",async ev=>{const inp=ev.target.closest("[da
 
 /* ---------- storage: Claude (shared database) or static site (data.js + browser draft) ---------- */
 const DRAFT_KEY="gk-biodata-draft",GH_KEY="gk-github-settings";
+const REPO="kings-326royal/king-website"; // only people with write access to this GitHub repository can open the editor
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 let db=null;
 function snapshot(){return{profile:state.profile,sections:state.sections,updatedAt:new Date().toISOString().slice(0,10),base:state.base}}
@@ -1061,11 +1082,53 @@ async function saveProfile(prof){
   catch(e){toast(e&&e.code==="invalid_argument"?"You do not have permission to change the profile.":"Could not save the profile. If you added a large photo, try a smaller one.");return false}
 }
 function ghSettings(){try{return JSON.parse(ls.get(GH_KEY)||"{}")}catch(e){return{}}}
+/* ---------- owner sign-in: the editor opens only where a GitHub token with write access to REPO was verified ---------- */
+const sameRepo=(a,b)=>String(a||"").toLowerCase()===String(b||"").toLowerCase();
+function signedIn(){const g=ghSettings();return !!(g.token&&sameRepo(g.verified,REPO))}
+function saveGh(g){const o=ghSettings();if(g.token&&g.token===o.token&&o.verified)g.verified=o.verified;ls.set(GH_KEY,JSON.stringify(g))}
+async function checkToken(token){
+  const r=await fetch("https://api.github.com/repos/"+REPO,{headers:{"Authorization":"Bearer "+token,"Accept":"application/vnd.github+json"},cache:"no-store"});
+  if(r.status===401)return{ok:false,msg:"GitHub rejected this token. It may be mistyped, expired or deleted."};
+  if(!r.ok)return{ok:false,msg:"GitHub answered "+r.status+". Check that the token has access to "+REPO+"."};
+  const p=(await r.json()).permissions||{};
+  return p.push||p.maintain||p.admin?{ok:true}:{ok:false,msg:"This token's account does not have write access to "+REPO+"."};
+}
+function showSignIn(msg){
+  const d=$("#signin");$("#signinRepo").textContent=REPO;$("#siMsg").textContent=msg||"";
+  if(typeof d.showModal==="function"){if(!d.open)d.showModal()}else d.setAttribute("open","");
+  setTimeout(()=>$("#siToken").focus(),30);
+}
+function closeSignIn(){const d=$("#signin");$("#siToken").value="";if(d.open&&typeof d.close==="function")d.close();else d.removeAttribute("open")}
+async function openEditor(checked){
+  if(!signedIn()){showSignIn();return}
+  // Check the saved token again, so a deleted or expired token stops working. Offline, the signed-in device keeps working.
+  if(!checked){try{const c=await checkToken(ghSettings().token);if(!c.ok){signOut(false);showSignIn(c.msg);return}}catch(e){}}
+  if(!state.canEdit){state.canEdit=true;loadStatic(false)}
+  state.editing=true;render();$("#editSlot").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function signOut(ask){
+  if(ask&&state.dirty&&!confirm("This device has unpublished changes. Signing out discards them. Sign out anyway?"))return;
+  const g=ghSettings();delete g.token;delete g.verified;ls.set(GH_KEY,JSON.stringify(g));
+  if(ask){ls.del(DRAFT_KEY);toast("Signed out on this device.")}
+  state.canEdit=false;state.editing=false;state.openForm=null;state.confirmDel=null;loadStatic(true);
+  scrollTo({top:0,behavior:"smooth"});
+}
+$("#signinForm").addEventListener("submit",async ev=>{
+  ev.preventDefault();const t=$("#siToken").value.trim(),msg=$("#siMsg"),go=$("#siGo");
+  if(!t){msg.textContent="Paste your GitHub access token.";return}
+  go.disabled=true;msg.textContent="Checking with GitHub…";
+  try{const c=await checkToken(t);if(!c.ok){msg.textContent=c.msg;return}
+    const o=ghSettings();ls.set(GH_KEY,JSON.stringify({repo:REPO,branch:o.branch||"main",path:o.path||"data.js",token:t,verified:REPO}));
+    closeSignIn();toast("Signed in. Update records now appears on this device.");openEditor(true);
+  }catch(e){msg.textContent="Could not reach GitHub. Check the connection and try again."}
+  finally{go.disabled=false}
+});
+$("#siCancel").addEventListener("click",closeSignIn);
 function readGh(){const v=id=>(($("#"+id)||{}).value||"").trim();return{repo:v("ghRepo"),branch:v("ghBranch")||"main",path:v("ghPath")||"data.js",token:v("ghToken")}}
 function b64utf8(s){const bytes=new TextEncoder().encode(s);let bin="";for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(bin)}
 async function publishGitHub(){
   const g=readGh();if(!g.repo||!g.token){toast("Enter the repository and access token under GitHub settings.");return}
-  ls.set(GH_KEY,JSON.stringify(g));
+  saveGh(g);
   const api=`https://api.github.com/repos/${g.repo}/contents/${encodeURIComponent(g.path).replace(/%2F/g,"/")}`;
   const hdr={"Authorization":"Bearer "+g.token,"Accept":"application/vnd.github+json"};
   try{
@@ -1076,6 +1139,7 @@ async function publishGitHub(){
     else if(cur.status!==404)throw new Error(cur.status===401?"the token was rejected":"GitHub answered "+cur.status);
     const r=await fetch(api,{method:"PUT",headers:hdr,body:JSON.stringify({message:"Update biodata records",content:b64utf8(dataFile()),branch:g.branch,sha})});
     if(!r.ok)throw new Error(r.status===401||r.status===403?"the token cannot write to this repository":r.status===404?"the repository or branch was not found":"GitHub answered "+r.status);
+    if(sameRepo(g.repo,REPO)){const sv=ghSettings();sv.verified=REPO;ls.set(GH_KEY,JSON.stringify(sv))}
     ls.del(DRAFT_KEY);state.dirty=false;state.base=fingerprint(snapshot());render();toast("Published. The live site updates in about a minute.");
   }catch(e){toast("Could not publish: "+e.message+".")}
 }
@@ -1180,7 +1244,7 @@ function renderAccess(){
       done();$("#dlStatus").textContent=`Approved ${r.n}'s request.`}
     catch(e){toast("Could not create the link: "+(e&&e.message||"unknown error")+".")}};
   if(owner){$("#apOk").addEventListener("click",()=>approve(true));$("#apCopy").addEventListener("click",()=>approve(false))}
-  else $("#apSetup").addEventListener("click",()=>$("#editLink").click());
+  else $("#apSetup").addEventListener("click",()=>openEditor());
 }
 $("#rqBtn").addEventListener("click",async()=>{
   const box=$("#reqBox"),st=$("#dlStatus"),btn=$("#rqBtn");
@@ -1210,7 +1274,7 @@ $("#rqBtn").addEventListener("click",async()=>{
 function loadStatic(ignoreDraft){
   const base=window.CV_DATA||{};let src=base;state.dirty=false;
   state.base=fingerprint(base);
-  if(!ignoreDraft){try{const d=JSON.parse(ls.get(DRAFT_KEY)||"null");if(d&&d.sections){src=d;state.dirty=true;state.canEdit=true;state.base=d.base||null}}catch(e){}}
+  if(!ignoreDraft&&signedIn()){try{const d=JSON.parse(ls.get(DRAFT_KEY)||"null");if(d&&d.sections){src=d;state.dirty=true;state.canEdit=true;state.base=d.base||null}}catch(e){}}
   state.profile=src.profile?JSON.parse(JSON.stringify(src.profile)):null;
   if(state.profile)delete state.profile.website; // retired field; the documents link to SITE_URL
   state.sections=JSON.parse(JSON.stringify(src.sections||{}));
@@ -1218,11 +1282,11 @@ function loadStatic(ignoreDraft){
   render();if(!$("#preview").hidden)showPreview();
 }
 syncFormats();
-$("#editLink").addEventListener("click",()=>{state.canEdit=true;state.editing=true;render();$("#editSlot").scrollIntoView({behavior:"smooth",block:"start"})});
+$("#editLink").addEventListener("click",()=>openEditor());
 if(STATIC){
-  if(location.hash==="#edit"){state.canEdit=true;state.editing=true}
   {const m=location.hash.match(/^#sec-(\w+)$/);if(m&&SEC[m[1]])state.openSec=m[1]}
   loadStatic(false);loadAccess();
+  if(location.hash==="#edit")openEditor();
 }else{
   $("#editLink").hidden=true;render();
   (async()=>{
