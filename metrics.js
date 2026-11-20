@@ -1,14 +1,13 @@
 /* Citation metrics, written automatically by scripts/update_metrics.py. Do not edit by hand. */
 window.CV_METRICS = {
- "updated": "2026-11-16",
+ "updated": "2026-11-20",
  "errors": {
-  "scholar": "Last fetch failed (HTTP Error 403: Forbidden); showing the previous figures.",
   "scopus": "No SCOPUS_API_KEY set; add it as a repository secret to enable this source.",
   "wos": "No WOS_API_KEY set; add it as a repository secret to enable this source."
  },
  "scholar": {
-  "citations": 185,
-  "citationsSince": 171,
+  "citations": 186,
+  "citationsSince": 172,
   "sinceLabel": "Since 2021",
   "hIndex": 9,
   "hIndexSince": 9,
@@ -54,7 +53,7 @@ window.CV_METRICS = {
    },
    {
     "year": 2026,
-    "citations": 35
+    "citations": 36
    }
   ],
   "top": [
@@ -62,7 +61,7 @@ window.CV_METRICS = {
     "title": "Brain tumour classification: a comprehensive systematic review on various constraints",
     "venue": "Computer Methods in Biomechanics and Biomedical Engineering: Imaging …, 2023",
     "year": "2023",
-    "citations": 18
+    "citations": 19
    },
    {
     "title": "Prediction of the COVID disease using lung CT images by Deep Learning algorithm: DETS-optimized Resnet 101 classifier",
@@ -120,6 +119,6 @@ window.CV_METRICS = {
    }
   ],
   "url": "https://scholar.google.com/citations?hl=en&user=pJ89c1YAAAAJ",
-  "updated": "2026-10-24"
+  "updated": "2026-11-20"
  }
 };

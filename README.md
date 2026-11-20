@@ -121,13 +121,24 @@ GitHub runs it for you through `.github/workflows/update-metrics.yml`:
 
 | Source | What you need |
 | --- | --- |
-| Google Scholar | Nothing. It works from your Scholar ID. |
+| Google Scholar | Your Scholar ID (already set). Refreshed from your Mac; see below. |
 | Scopus | A free API key from https://dev.elsevier.com ("I want an API key"). Add it under **Settings → Secrets and variables → Actions → New repository secret**, named `SCOPUS_API_KEY`. |
 | Web of Science | A free "Web of Science Starter API" key from https://developer.clarivate.com. Add it as a repository secret named `WOS_API_KEY`. |
 
 Until a key is added, that source shows "Not connected yet" on the website, and the other sources still work. If one fetch fails (Google Scholar sometimes blocks automated visits), the site keeps the previous figures and the next weekly run tries again.
 
 The page uses the first available source for the headline citation and h-index tiles, in this order: Google Scholar, Scopus, Web of Science. If none is available, it uses the manual citation and h-index values in **Edit profile details**.
+
+### Google Scholar is refreshed from your Mac
+
+Google Scholar refuses requests from GitHub's servers (the weekly GitHub job gets "HTTP 403" and keeps the previous figures), so the Scholar figures are fetched from your Mac by `~/Library/Application Support/ProfileSites/update-scholar-metrics.sh`. It refreshes both profile sites (King and Jensha) and pushes `metrics.js` only when a figure has changed; the live site updates about a minute later.
+
+- Refresh now: `bash ~/Library/Application\ Support/ProfileSites/update-scholar-metrics.sh`
+- Daily refresh (09:30, or when the Mac next wakes up): load `~/Library/LaunchAgents/com.kings326royal.scholar-metrics.plist` with `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.kings326royal.scholar-metrics.plist`
+- Stop the daily refresh: `launchctl bootout gui/$(id -u)/com.kings326royal.scholar-metrics`, then delete the plist file.
+- Log of each run: `~/Library/Application Support/ProfileSites/update.log`
+
+The Mac must be switched on (asleep is fine). The weekly GitHub job still handles Scopus and Web of Science once their API keys are added.
 
 ## Notes
 
